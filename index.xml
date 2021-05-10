@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Zarah Jamaluddin</title>
+    <link>/</link>
+    <description>Recent content on Zarah Jamaluddin</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Project 1: Exploratory Data Analysis</title>
+      <link>/project/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project1/</guid>
+      <description>0. Introduction In this investigation, I will explore the correlation between a country’s overall happiness score and their corresponding continent, region, population density (per km2), and GDP per capita (US$). The country name and happiness score variables was imported from the World Happiness Report (X2017) dataset and the country name, continent, region, population density, and GDP per capita was imported from the Socio-Economic Country Profiles (soci_econ_country_profiles) dataset. Both of these datasets were obtained using kaggle.</description>
+    </item>
+    
+    <item>
+      <title>Project 2: Modeling, Testing, and Predicting</title>
+      <link>/project/project2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>0. Introduction vgsales &amp;lt;- read_csv(&amp;quot;vgsales.csv&amp;quot;) In this investigation, I imported the vgsales dataset which highlights video game sales from 2014 to 2016 for the regions North America, Europe, and Japan. Within this dataset, the variables I am exploring include Name, Platform, Year, Genre, NA_Sales, EU_Sales, JP_Sales, Other_Sales, and Global_Sales with there being 292 total observations. Within these variables, “Name” represents the title of the individual video games and “Platform” represents the console names such as different variations of PlayStation, Xbox, Wii, and Nintendo DS consoles.</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/</guid>
+      <description> Check out some of my coding projects below:
+ Wrangling &amp;amp; Exploratory Data Analysis
+ Modeling, Inference, Prediction
+  -- </description>
+    </item>
+    
+    <item>
+      <title>Resume</title>
+      <link>/resume/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/resume/</guid>
+      <description>    </description>
+    </item>
+    
+  </channel>
+</rss>

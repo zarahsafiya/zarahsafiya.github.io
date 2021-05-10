@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Zarah Jamaluddin" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Project 1: Exploratory Data Analysis</title>
+    <meta name="generator" content="Hugo 0.83.1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project1/">Project 1: Exploratory Data Analysis</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         January 1, 0001 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="introduction" class="section level2">
+<h2>0. Introduction</h2>
+<p>In this investigation, I will explore the correlation between a country’s overall happiness score and their corresponding continent, region, population density (per km2), and GDP per capita (US$). The country name and happiness score variables was imported from the World Happiness Report (X2017) dataset and the country name, continent, region, population density, and GDP per capita was imported from the Socio-Economic Country Profiles (soci_econ_country_profiles) dataset. Both of these datasets were obtained using kaggle.com. I believe there may be a possible association between these datasets in that I expect countries with a higher GDP and lower population density to have a higher happiness score.</p>
+</div>
+<div id="tidying-rearranging-widelong" class="section level2">
+<h2>1. Tidying: Rearranging Wide/Long</h2>
+<pre class="r"><code>library(tidyverse)
+library(dplyr)
+library(readxl)
+X2017 &lt;- read_excel(&quot;2017.xlsx&quot;)
+library(readxl)
+soci_econ_country_profiles &lt;- read_excel(&quot;soci_econ_country_profiles.xlsx&quot;)
+
+wide_happiness &lt;- X2017 %&gt;% pivot_wider(names_from = &quot;country&quot;, 
+    values_from = &quot;Happiness.Score&quot;)
+long_happiness &lt;- wide_happiness %&gt;% pivot_longer(cols = c(1:155), 
+    names_to = &quot;country&quot;, values_to = &quot;Happiness.Score&quot;)
+head(wide_happiness)</code></pre>
+<pre><code>## # A tibble: 1 x 155
+##   Norway Denmark Iceland Switzerland Finland Netherlands Canada `New Zealand`
+##    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;       &lt;dbl&gt;  &lt;dbl&gt;         &lt;dbl&gt;
+## 1   7.54    7.52    7.50        7.49    7.47        7.38   7.32          7.31
+## # … with 147 more variables: Sweden &lt;dbl&gt;, Australia &lt;dbl&gt;, Israel &lt;dbl&gt;,
+## #   `Costa Rica` &lt;dbl&gt;, Austria &lt;dbl&gt;, `United States` &lt;dbl&gt;, Ireland &lt;dbl&gt;,
+## #   Germany &lt;dbl&gt;, Belgium &lt;dbl&gt;, Luxembourg &lt;dbl&gt;, `United Kingdom` &lt;dbl&gt;,
+## #   Chile &lt;dbl&gt;, `United Arab Emirates` &lt;dbl&gt;, Brazil &lt;dbl&gt;, `Czech
+## #   Republic` &lt;dbl&gt;, Argentina &lt;dbl&gt;, Mexico &lt;dbl&gt;, Singapore &lt;dbl&gt;,
+## #   Malta &lt;dbl&gt;, Uruguay &lt;dbl&gt;, Guatemala &lt;dbl&gt;, Panama &lt;dbl&gt;, France &lt;dbl&gt;,
+## #   Thailand &lt;dbl&gt;, `Taiwan Province of China` &lt;dbl&gt;, Spain &lt;dbl&gt;, Qatar &lt;dbl&gt;,
+## #   Colombia &lt;dbl&gt;, `Saudi Arabia` &lt;dbl&gt;, `Trinidad and Tobago` &lt;dbl&gt;,
+## #   Kuwait &lt;dbl&gt;, Slovakia &lt;dbl&gt;, Bahrain &lt;dbl&gt;, Malaysia &lt;dbl&gt;,
+## #   Nicaragua &lt;dbl&gt;, Ecuador &lt;dbl&gt;, `El Salvador` &lt;dbl&gt;, Poland &lt;dbl&gt;,
+## #   Uzbekistan &lt;dbl&gt;, Italy &lt;dbl&gt;, Russia &lt;dbl&gt;, Belize &lt;dbl&gt;, Japan &lt;dbl&gt;,
+## #   Lithuania &lt;dbl&gt;, Algeria &lt;dbl&gt;, Latvia &lt;dbl&gt;, `South Korea` &lt;dbl&gt;,
+## #   Moldova &lt;dbl&gt;, Romania &lt;dbl&gt;, Bolivia &lt;dbl&gt;, Turkmenistan &lt;dbl&gt;,
+## #   Kazakhstan &lt;dbl&gt;, `North Cyprus` &lt;dbl&gt;, Slovenia &lt;dbl&gt;, Peru &lt;dbl&gt;,
+## #   Mauritius &lt;dbl&gt;, Cyprus &lt;dbl&gt;, Estonia &lt;dbl&gt;, Belarus &lt;dbl&gt;, Libya &lt;dbl&gt;,
+## #   Turkey &lt;dbl&gt;, Paraguay &lt;dbl&gt;, `Hong Kong S.A.R., China` &lt;dbl&gt;,
+## #   Philippines &lt;dbl&gt;, Serbia &lt;dbl&gt;, Jordan &lt;dbl&gt;, Hungary &lt;dbl&gt;,
+## #   Jamaica &lt;dbl&gt;, Croatia &lt;dbl&gt;, Kosovo &lt;dbl&gt;, China &lt;dbl&gt;, Pakistan &lt;dbl&gt;,
+## #   Indonesia &lt;dbl&gt;, Venezuela &lt;dbl&gt;, Montenegro &lt;dbl&gt;, Morocco &lt;dbl&gt;,
+## #   Azerbaijan &lt;dbl&gt;, `Dominican Republic` &lt;dbl&gt;, Greece &lt;dbl&gt;, Lebanon &lt;dbl&gt;,
+## #   Portugal &lt;dbl&gt;, `Bosnia and Herzegovina` &lt;dbl&gt;, Honduras &lt;dbl&gt;,
+## #   Macedonia &lt;dbl&gt;, Somalia &lt;dbl&gt;, Vietnam &lt;dbl&gt;, Nigeria &lt;dbl&gt;,
+## #   Tajikistan &lt;dbl&gt;, Bhutan &lt;dbl&gt;, Kyrgyzstan &lt;dbl&gt;, Nepal &lt;dbl&gt;,
+## #   Mongolia &lt;dbl&gt;, `South Africa` &lt;dbl&gt;, Tunisia &lt;dbl&gt;, `Palestinian
+## #   Territories` &lt;dbl&gt;, Egypt &lt;dbl&gt;, Bulgaria &lt;dbl&gt;, `Sierra Leone` &lt;dbl&gt;,
+## #   Cameroon &lt;dbl&gt;, Iran &lt;dbl&gt;, …</code></pre>
+<pre class="r"><code>head(long_happiness)</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   country     Happiness.Score
+##   &lt;chr&gt;                 &lt;dbl&gt;
+## 1 Norway                 7.54
+## 2 Denmark                7.52
+## 3 Iceland                7.50
+## 4 Switzerland            7.49
+## 5 Finland                7.47
+## 6 Netherlands            7.38</code></pre>
+<p><em>First, I had to import the tidyverse and dplyr packages as well as the two datasets into R. Then, I transformed the X2017 dataset from long to wide by first using the pivot_wider function, ensuring that the dataset received its names from the country variable and the values from the Happiness.Score variable. I then transformed the X2017 dataset from wide back to long by using the pivot_longer function, ensuring that the dataset transformed its names to the country variable and the values to the Happiness.Score variable.</em></p>
+</div>
+<div id="joiningmerging" class="section level2">
+<h2>2. Joining/Merging</h2>
+<pre class="r"><code>full_happiness &lt;- inner_join(soci_econ_country_profiles, X2017, 
+    by = c(Country = &quot;country&quot;))
+
+length(setdiff(soci_econ_country_profiles$Country, X2017$country))</code></pre>
+<pre><code>## [1] 8</code></pre>
+<pre class="r"><code>length(setdiff(X2017$country, soci_econ_country_profiles$Country))</code></pre>
+<pre><code>## [1] 98</code></pre>
+<pre class="r"><code>length(intersect(soci_econ_country_profiles$Country, X2017$country))</code></pre>
+<pre><code>## [1] 57</code></pre>
+<p><em>In order to join the two datasets, I used the dplyr inner_join function as I needed to join the two datasets and drop any of the country variable rows in either dataset that were not found in both datasets. Addtionally, I did not want there to be NA values within my data, thus causing me to need to intersect my two datasets and not use the dplyr full_join function.</em></p>
+<p><em>As shown by the length(setdiff) function, there are 8 countries that appear in the soci_econ_country_profiles dataset that do not appear in the X2017 dataset while there are 98 countries that appear in the X2017 dataset that appear in the X2017 dataset that do not appear in the soci_econ_country_profiles dataset. Therefore, there is an intersection of 57 total countries between the two datasets and 106 total country cases were dropped from the data.</em></p>
+<p><em>As this removal allowed for a more cohesive dataset to be produces, thus allowing for a better comparison of the joined variables in the combined dataset. For this reason, I do not see any potential problems with removing the dropped cases from the combined dataset.</em></p>
+</div>
+<div id="wrangling" class="section level2">
+<h2>3. Wrangling</h2>
+<div id="mutate-select" class="section level3">
+<h3>Mutate, Select</h3>
+<pre class="r"><code>full_happiness2 &lt;- full_happiness %&gt;% mutate(`Population density (per sq mi)` = `Population density (per km2, 2017)`/2.59) %&gt;% 
+    select(Country, Continent, Region, Happiness.Score, &quot;GDP per capita (current US$)&quot;, 
+        &quot;Population density (per sq mi)&quot;, &quot;Population density (per km2, 2017)&quot;)
+head(full_happiness2)</code></pre>
+<pre><code>## # A tibble: 6 x 7
+##   Country Continent Region Happiness.Score `GDP per capita… `Population den…
+##   &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+## 1 Argent… South Am… South…            6.60           14564.             6.25
+## 2 Austra… Australia Ocean…            7.28           51352.             1.24
+## 3 Austria Europe    Weste…            7.01           44118.            40.9 
+## 4 Belarus Europe    Easte…            5.57            5751.            18.0 
+## 5 Belgium Europe    Weste…            6.89           40278.           146.  
+## 6 Bosnia… Europe    South…            5.18            4265             26.6 
+## # … with 1 more variable: `Population density (per km2, 2017)` &lt;dbl&gt;</code></pre>
+</div>
+<div id="arrange" class="section level3">
+<h3>Arrange</h3>
+<pre class="r"><code>head(full_happiness2 %&gt;% arrange(desc(Happiness.Score)))</code></pre>
+<pre><code>## # A tibble: 6 x 7
+##   Country Continent Region Happiness.Score `GDP per capita… `Population den…
+##   &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+## 1 Norway  Europe    North…            7.54           74186.             5.60
+## 2 Denmark Europe    North…            7.52           53149.            52.2 
+## 3 Switze… Europe    Weste…            7.49           80831.            82.8 
+## 4 Finland Europe    North…            7.47           42148.             7.03
+## 5 Nether… Europe    Weste…            7.38           44332.           195.  
+## 6 Canada  North Am… North…            7.32           43206.             1.54
+## # … with 1 more variable: `Population density (per km2, 2017)` &lt;dbl&gt;</code></pre>
+</div>
+<div id="summarize-quantile" class="section level3">
+<h3>Summarize, Quantile</h3>
+<pre class="r"><code>full_happiness2 %&gt;% summarize(quantile(Happiness.Score))</code></pre>
+<pre><code>## # A tibble: 5 x 1
+##   `quantile(Happiness.Score)`
+##                         &lt;dbl&gt;
+## 1                        4.10
+## 2                        5.29
+## 3                        5.97
+## 4                        6.71
+## 5                        7.54</code></pre>
+</div>
+<div id="summarize-group_by-mean" class="section level3">
+<h3>Summarize, Group_by, Mean</h3>
+<pre class="r"><code>full_happiness2 %&gt;% group_by(full_happiness2$Continent) %&gt;% summarize(mean(`Population density (per sq mi)`), 
+    mean(`GDP per capita (current US$)`), mean(Happiness.Score))</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   `full_happiness2$… `mean(\`Population d… `mean(\`GDP per ca… `mean(Happiness.…
+##   &lt;chr&gt;                              &lt;dbl&gt;               &lt;dbl&gt;             &lt;dbl&gt;
+## 1 Africa                             28.0                4613.              4.78
+## 2 Asia                               91.2               16119.              5.65
+## 3 Australia                           4.07              44823.              7.30
+## 4 Europe                             48.3               29084.              6.18
+## 5 North America                      13.6               26093.              6.95
+## 6 South America                      10.6               10641.              6.56</code></pre>
+</div>
+<div id="summarize-group_by-mean-1" class="section level3">
+<h3>Summarize, Group_by, Mean</h3>
+<pre class="r"><code>full_happiness2 %&gt;% group_by(full_happiness2$Region) %&gt;% summarize(mean(`Population density (per sq mi)`), 
+    mean(`GDP per capita (current US$)`), mean(Happiness.Score))</code></pre>
+<pre><code>## # A tibble: 14 x 4
+##    `full_happiness2$… `mean(\`Population … `mean(\`GDP per ca… `mean(Happiness.…
+##    &lt;chr&gt;                             &lt;dbl&gt;               &lt;dbl&gt;             &lt;dbl&gt;
+##  1 CentralAmerica                    25.6                8981.              6.58
+##  2 EasternAsia                       96.5               21369.              5.60
+##  3 EasternEurope                     34.1                9218.              5.37
+##  4 NorthernAfrica                    37.8                3452.              4.74
+##  5 NorthernAmerica                    1.54              43206.              7.32
+##  6 NorthernEurope                    29.5               44543.              6.88
+##  7 Oceania                            4.07              44823.              7.30
+##  8 South-easternAsia                 80.1                4780.              5.65
+##  9 SouthAmerica                      10.6               10641.              6.56
+## 10 SouthernAfrica                    18.1                5773               4.83
+## 11 SouthernAsia                     134.                 2333.              4.67
+## 12 SouthernEurope                    40.6               16878.              5.55
+## 13 WesternAsia                       80.9               27064.              6.03
+## 14 WesternEurope                    100.                47925.              7.03</code></pre>
+</div>
+<div id="filter-summarize-mean-median" class="section level3">
+<h3>Filter, Summarize, Mean, Median</h3>
+<pre class="r"><code>full_happiness2 %&gt;% filter(`GDP per capita (current US$)` &gt; median(`GDP per capita (current US$)`)) %&gt;% 
+    summarize(mean(Happiness.Score))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `mean(Happiness.Score)`
+##                     &lt;dbl&gt;
+## 1                    6.64</code></pre>
+<pre class="r"><code>full_happiness2 %&gt;% filter(`GDP per capita (current US$)` &lt; median(`GDP per capita (current US$)`)) %&gt;% 
+    summarize(mean(Happiness.Score))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `mean(Happiness.Score)`
+##                     &lt;dbl&gt;
+## 1                    5.45</code></pre>
+</div>
+<div id="filter-summarize-mean-median-1" class="section level3">
+<h3>Filter, Summarize, Mean, Median</h3>
+<pre class="r"><code>full_happiness2 %&gt;% filter(`Population density (per sq mi)` &gt; 
+    median(`Population density (per sq mi)`)) %&gt;% summarize(mean(Happiness.Score))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `mean(Happiness.Score)`
+##                     &lt;dbl&gt;
+## 1                    6.03</code></pre>
+<pre class="r"><code>full_happiness2 %&gt;% filter(`Population density (per sq mi)` &lt; 
+    median(`Population density (per sq mi)`)) %&gt;% summarize(mean(Happiness.Score))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `mean(Happiness.Score)`
+##                     &lt;dbl&gt;
+## 1                    6.11</code></pre>
+</div>
+<div id="summarize-arrange-group_by-filter-select-max" class="section level3">
+<h3>Summarize, Arrange, Group_by, Filter, Select, Max</h3>
+<pre class="r"><code>full_happiness2 %&gt;% group_by(full_happiness2$Region) %&gt;% summarize(max_GDP = max(`GDP per capita (current US$)`)) %&gt;% 
+    arrange(desc(max_GDP))</code></pre>
+<pre><code>## # A tibble: 14 x 2
+##    `full_happiness2$Region` max_GDP
+##    &lt;chr&gt;                      &lt;dbl&gt;
+##  1 WesternEurope             80831.
+##  2 NorthernEurope            74186.
+##  3 WesternAsia               73653.
+##  4 Oceania                   51352.
+##  5 NorthernAmerica           43206.
+##  6 EasternAsia               34629.
+##  7 SouthernEurope            30462.
+##  8 EasternEurope             16082.
+##  9 SouthAmerica              14564.
+## 10 South-easternAsia          9768.
+## 11 CentralAmerica             8981.
+## 12 SouthernAfrica             5773 
+## 13 SouthernAsia               3974.
+## 14 NorthernAfrica             3452.</code></pre>
+<pre class="r"><code>full_happiness2 %&gt;% filter(`GDP per capita (current US$)` == 
+    max(`GDP per capita (current US$)`)) %&gt;% select(Country)</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   Country    
+##   &lt;chr&gt;      
+## 1 Switzerland</code></pre>
+</div>
+<div id="summarize-arrange-group_by-filter-select-min" class="section level3">
+<h3>Summarize, Arrange, Group_by, Filter, Select, Min</h3>
+<pre class="r"><code>full_happiness2 %&gt;% group_by(full_happiness2$Region) %&gt;% summarize(min_GDP = min(`GDP per capita (current US$)`)) %&gt;% 
+    arrange(min_GDP)</code></pre>
+<pre><code>## # A tibble: 14 x 2
+##    `full_happiness2$Region` min_GDP
+##    &lt;chr&gt;                      &lt;dbl&gt;
+##  1 SouthernAsia               1410.
+##  2 EasternEurope              2022.
+##  3 South-easternAsia          2068.
+##  4 NorthernAfrica             3452.
+##  5 SouthernEurope             4265 
+##  6 WesternAsia                4940.
+##  7 SouthernAfrica             5773 
+##  8 SouthAmerica               6056.
+##  9 EasternAsia                8109.
+## 10 CentralAmerica             8981.
+## 11 NorthernEurope            14384.
+## 12 WesternEurope             36304.
+## 13 Oceania                   38294.
+## 14 NorthernAmerica           43206.</code></pre>
+<pre class="r"><code>full_happiness2 %&gt;% filter(`GDP per capita (current US$)` == 
+    min(`GDP per capita (current US$)`)) %&gt;% select(Country)</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   Country 
+##   &lt;chr&gt;   
+## 1 Pakistan</code></pre>
+</div>
+<div id="summarize-arrange-group_by-filter-select-max-1" class="section level3">
+<h3>Summarize, Arrange, Group_by, Filter, Select, Max</h3>
+<pre class="r"><code>full_happiness2 %&gt;% group_by(full_happiness2$Region) %&gt;% summarize(max_population = max(`Population density (per sq mi)`)) %&gt;% 
+    arrange(desc(max_population))</code></pre>
+<pre><code>## # A tibble: 14 x 2
+##    `full_happiness2$Region` max_population
+##    &lt;chr&gt;                             &lt;dbl&gt;
+##  1 WesternAsia                      230.  
+##  2 WesternEurope                    195.  
+##  3 SouthernAsia                     174.  
+##  4 South-easternAsia                136.  
+##  5 EasternAsia                      135.  
+##  6 NorthernEurope                   106.  
+##  7 SouthernEurope                    77.9 
+##  8 EasternEurope                     48.1 
+##  9 NorthernAfrica                    37.8 
+## 10 CentralAmerica                    25.6 
+## 11 SouthernAfrica                    18.1 
+## 12 SouthAmerica                      17.1 
+## 13 Oceania                            6.91
+## 14 NorthernAmerica                    1.54</code></pre>
+<pre class="r"><code>full_happiness2 %&gt;% filter(`Population density (per sq mi)` == 
+    max(`Population density (per sq mi)`)) %&gt;% select(Country)</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   Country
+##   &lt;chr&gt;  
+## 1 Lebanon</code></pre>
+</div>
+<div id="summarize-arrange-group_by-filter-select-min-1" class="section level3">
+<h3>Summarize, Arrange, Group_by, Filter, Select, Min</h3>
+<pre class="r"><code>full_happiness2 %&gt;% group_by(full_happiness2$Region) %&gt;% summarize(min_population = min(`Population density (per sq mi)`)) %&gt;% 
+    arrange(min_population)</code></pre>
+<pre><code>## # A tibble: 14 x 2
+##    `full_happiness2$Region` min_population
+##    &lt;chr&gt;                             &lt;dbl&gt;
+##  1 Oceania                            1.24
+##  2 NorthernAmerica                    1.54
+##  3 NorthernEurope                     5.60
+##  4 WesternAsia                        5.91
+##  5 SouthAmerica                       6.25
+##  6 EasternEurope                     18.0 
+##  7 SouthernAfrica                    18.1 
+##  8 CentralAmerica                    25.6 
+##  9 SouthernEurope                    26.6 
+## 10 South-easternAsia                 37.2 
+## 11 NorthernAfrica                    37.8 
+## 12 WesternEurope                     40.9 
+## 13 EasternAsia                       58.0 
+## 14 SouthernAsia                      98.7</code></pre>
+<pre class="r"><code>full_happiness2 %&gt;% filter(`Population density (per sq mi)` == 
+    min(`Population density (per sq mi)`)) %&gt;% select(Country)</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   Country  
+##   &lt;chr&gt;    
+## 1 Australia</code></pre>
+</div>
+<div id="filter-summarize-median" class="section level3">
+<h3>Filter, Summarize, Median</h3>
+<pre class="r"><code>full_happiness2 %&gt;% filter(`GDP per capita (current US$)` &gt; median(`GDP per capita (current US$)`)) %&gt;% 
+    summarize(median(`Population density (per sq mi)`))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `median(\`Population density (per sq mi)\`)`
+##                                          &lt;dbl&gt;
+## 1                                         43.5</code></pre>
+<pre class="r"><code>full_happiness2 %&gt;% filter(`GDP per capita (current US$)` &lt; median(`GDP per capita (current US$)`)) %&gt;% 
+    summarize(median(`Population density (per sq mi)`))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `median(\`Population density (per sq mi)\`)`
+##                                          &lt;dbl&gt;
+## 1                                         38.3</code></pre>
+</div>
+<div id="filter-summarize-median-1" class="section level3">
+<h3>Filter, Summarize, Median</h3>
+<pre class="r"><code>full_happiness2 %&gt;% filter(`Population density (per sq mi)` &gt; 
+    median(`Population density (per sq mi)`)) %&gt;% summarize(median(`GDP per capita (current US$)`))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `median(\`GDP per capita (current US$)\`)`
+##                                        &lt;dbl&gt;
+## 1                                     20591.</code></pre>
+<pre class="r"><code>full_happiness2 %&gt;% filter(`Population density (per sq mi)` &lt; 
+    median(`Population density (per sq mi)`)) %&gt;% summarize(median(`GDP per capita (current US$)`))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `median(\`GDP per capita (current US$)\`)`
+##                                        &lt;dbl&gt;
+## 1                                     13900.</code></pre>
+<p><em>To begin my wrangling investigation, first I decided to mutate the population density variable from being in km^2 to being in mi^2 in order for both my GDP per capita and population density to be in the U.S. Imperial system of measurement, thus creating a new and more cohesive dataset. I then arranged my data in descending order of the Happiness.Score variable in order to see the ranking of countries according to highest to lowest happiness scores, allowing me to see that the top three countries according to happiness score were Norway, Denmark, and Switzerland. Next, in order to see the breakdown of happiness scores, I used the summarize(quantile) function, thus causing me to see the min, median, and max of the Happiness.Score variable. Next, in order to test how the population density, GDP per capita, and happiness score compared between each region and its corresponding continent, I utilized the summarize, group_by, and mean functions individually for continent and region.</em></p>
+<p><em>After my initial wrangling tests, I was then curious to see how the average happiness score differed when compared to countries that had a GDP per capita or population density greater than the median values for each variable. As a result, I used the filter, summarize, mean, and median functions to test this idea and found that when the GDP per capita and population density was greater than the medians for each value, the happiness score was 6.64 and 5.45 respectively. To compare these findings with when the GDP per capita and population density was less than the median values, I conducted a similar test and found the happiness scores to be 6.03 and 6.11, respectively, thus showing that while the happiness score did decrease with a lower GDP, happiness score did in fact increase with a lower population density as I predicted. I then found the maximum and minimum GDP per capita per each given region and used the select function to find that the country with the greatest GDP per capita was Switzerland, while the country with the least GDP per capita was Pakistan. I also conducted a similar test using population density and found that Lebanon had the highest population density, while Australia had the lowest population density. Lastly, I wanted to compare the GDP per capita and population density variables, thus causing me to use the filter, summarize, and median functions to find the median population density when GDP per capita was greater (43.5 mi^2) and less (38.3 mi^2) than the median GDP per capita. I then conducted the reverse test to find the median GDP per capita when population density was greater ($20,591) and less ($13,900) than the median population density.</em></p>
+</div>
+</div>
+<div id="visualizing" class="section level2">
+<h2>4. Visualizing</h2>
+<div id="correlation-heatmap" class="section level3">
+<h3>Correlation Heatmap</h3>
+<pre class="r"><code>corMatrix &lt;- full_happiness2 %&gt;% select_if(is.numeric) %&gt;% cor(use = &quot;pair&quot;)
+tidycor &lt;- corMatrix %&gt;% as.data.frame %&gt;% rownames_to_column(&quot;var1&quot;) %&gt;% 
+    pivot_longer(-1, names_to = &quot;var2&quot;, values_to = &quot;correlation&quot;)
+tidycor %&gt;% ggplot(aes(var1, var2, fill = correlation)) + geom_tile() + 
+    geom_text(aes(label = round(correlation, 2)), color = &quot;black&quot;, 
+        size = 3) + theme(axis.text.x = element_text(angle = 90, 
+    hjust = 1)) + scale_fill_gradient2(low = &quot;white&quot;, mid = &quot;blue&quot;, 
+    high = &quot;light blue&quot;) + ggtitle(&quot;Correlation Heatmap&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="happiness-score-vs.-region-faceted-by-continent" class="section level3">
+<h3>Happiness Score vs. Region, Faceted by Continent</h3>
+<pre class="r"><code>library(ggplot2)
+
+ggplot(data = full_happiness2, aes(x = Region, y = Happiness.Score, 
+    fill = Region)) + geom_bar(stat = &quot;summary&quot;, fun = mean) + 
+    theme(legend.position = &quot;None&quot;) + facet_wrap(~Continent) + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
+    labs(title = &quot;Mean Happiness Score vs. Region, Faceted by Continent&quot;, 
+        x = &quot;Region&quot;, y = &quot;Mean Happiness Score&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="happiness-score-vs.-gdp-per-capita-colored-by-region" class="section level3">
+<h3>Happiness Score vs. GDP per capita, Colored by Region</h3>
+<pre class="r"><code>ggplot(data = full_happiness2, aes(x = `GDP per capita (current US$)`, 
+    y = Happiness.Score, color = Region)) + geom_point() + theme(axis.text.x = element_text(angle = 90, 
+    hjust = 1)) + scale_x_continuous(breaks = round(seq(0, 90000, 
+    10000))) + theme_dark() + labs(title = &quot;Happiness Score vs. GDP per capita, Colored by Region&quot;, 
+    x = &quot;GDP per capita (current US$)&quot;, y = &quot;Happiness Score&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="happiness-score-vs.-population-density-colored-by-region" class="section level3">
+<h3>Happiness Score vs. Population Density, Colored by Region</h3>
+<pre class="r"><code>ggplot(data = full_happiness2, aes(x = `Population density (per sq mi)`, 
+    y = Happiness.Score, color = Region)) + geom_point() + theme(axis.text.x = element_text(angle = 90, 
+    hjust = 1)) + scale_x_continuous(breaks = round(seq(0, 3500, 
+    500))) + theme_dark() + labs(title = &quot;Happiness Score vs. Population Density, Colored by Region&quot;, 
+    x = &quot;Population Density (per sq mi)&quot;, y = &quot;Happiness Score&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" />
+<em>As shown by the Correlation Heatmap, there is a 0.78 correlation between happiness score and GDP per capita, thus showing there to be a relatively large positive correlation between the two variables. However, there is a -0.15 correlation between happiness score and population density, thus showing that there is a very weak negative association between the two variables. Lastly, there is a 0.18 correlation between population density and GDP per capita, thus showing there to be very weak association between the two variables. Furthermore, in this graph, it is shown that there is a 1.00 correlation between population density (per sq mi) and population density (per km2, 2017) due to the fact that these two variables correspond to the same number, but in different units.</em></p>
+<p><em>Next, as shown by the Mean Happiness Score vs. Region, Faceted by Continent graph, it appears as though the Australia has the highest mean happiness scores for each region, while Africa has the lowest mean happiness scores for each region. Lastly, in order to compare happiness score for each region to both GDP per capita and population density, I created two scatterplots colored by region. From these two graphs, a positive correlation between happiness score and GDP per capita per region can be seen, while there does not appear to be as strong of a correlation between happiness score and population density per region with many of the points being scattered seemingly randomly throughout the graph.</em></p>
+</div>
+</div>
+<div id="dimensionality-reduction" class="section level2">
+<h2>5. Dimensionality Reduction</h2>
+<pre class="r"><code>library(cluster)
+
+pam_dat &lt;- full_happiness2 %&gt;% select(Happiness.Score, `GDP per capita (current US$)`)
+sil_width &lt;- vector()
+for (i in 2:10) {
+    pam_fit &lt;- pam(pam_dat, k = i)
+    sil_width[i] &lt;- pam_fit$silinfo$avg.width
+}
+ggplot() + geom_line(aes(x = 1:10, y = sil_width)) + scale_x_continuous(name = &quot;k&quot;, 
+    breaks = 1:10)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pam1 &lt;- full_happiness2 %&gt;% select(Happiness.Score, `GDP per capita (current US$)`) %&gt;% 
+    pam(k = 2)
+pamclust = full_happiness2 %&gt;% mutate(cluster = as.factor(pam1$clustering))
+pamclust %&gt;% ggplot(aes(Happiness.Score, `GDP per capita (current US$)`, 
+    color = cluster)) + geom_point()</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pamclust %&gt;% group_by(cluster) %&gt;% select(cluster, Happiness.Score, 
+    `GDP per capita (current US$)`) %&gt;% summarize_if(is.numeric, 
+    mean, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   cluster Happiness.Score `GDP per capita (current US$)`
+##   &lt;fct&gt;             &lt;dbl&gt;                          &lt;dbl&gt;
+## 1 1                  5.56                          9883.
+## 2 2                  6.98                         48078.</code></pre>
+<pre class="r"><code>full_happiness2 %&gt;% slice(pam1$id.med) %&gt;% select(Region, Happiness.Score, 
+    `GDP per capita (current US$)`)</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   Region          Happiness.Score `GDP per capita (current US$)`
+##   &lt;chr&gt;                     &lt;dbl&gt;                          &lt;dbl&gt;
+## 1 WesternAsia                5.22                          8571.
+## 2 NorthernAmerica            7.32                         43206.</code></pre>
+<pre class="r"><code>pam1$silinfo$avg.width</code></pre>
+<pre><code>## [1] 0.7220146</code></pre>
+<pre class="r"><code>library(cluster)
+
+pam_dat &lt;- full_happiness2 %&gt;% select(Happiness.Score, `Population density (per sq mi)`)
+sil_width &lt;- vector()
+for (i in 2:10) {
+    pam_fit &lt;- pam(pam_dat, k = i)
+    sil_width[i] &lt;- pam_fit$silinfo$avg.width
+}
+ggplot() + geom_line(aes(x = 1:10, y = sil_width)) + scale_x_continuous(name = &quot;k&quot;, 
+    breaks = 1:10)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pam1 &lt;- full_happiness2 %&gt;% select(Happiness.Score, `Population density (per sq mi)`) %&gt;% 
+    pam(k = 2)
+pamclust = full_happiness2 %&gt;% mutate(cluster = as.factor(pam1$clustering))
+pamclust %&gt;% ggplot(aes(Happiness.Score, `Population density (per sq mi)`, 
+    color = cluster)) + geom_point()</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pamclust %&gt;% group_by(cluster) %&gt;% select(cluster, Happiness.Score, 
+    `Population density (per sq mi)`) %&gt;% summarize_if(is.numeric, 
+    mean, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   cluster Happiness.Score `Population density (per sq mi)`
+##   &lt;fct&gt;             &lt;dbl&gt;                            &lt;dbl&gt;
+## 1 1                  6.09                             31.4
+## 2 2                  5.94                            138.</code></pre>
+<pre class="r"><code>full_happiness2 %&gt;% slice(pam1$id.med) %&gt;% select(Region, Happiness.Score, 
+    `Population density (per sq mi)`)</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   Region        Happiness.Score `Population density (per sq mi)`
+##   &lt;chr&gt;                   &lt;dbl&gt;                            &lt;dbl&gt;
+## 1 EasternEurope            5.82                             33.0
+## 2 EasternAsia              5.92                            135.</code></pre>
+<pre class="r"><code>pam1$silinfo$avg.width</code></pre>
+<pre><code>## [1] 0.7135178</code></pre>
+<p><em>During this section of the investigation, I used k-means/PAM clustering. First, I looked at the clustering between the two variables Happiness.Score and GDP per capita (current US$) and saw that within the ggplot using the goodness of fit that the highest silhouette width occurs at 2 clusters (k=2). I then used the pam() function to plot and summarize the clusters and found that the mean of cluster 1 was approximately 5.56, while the mean of cluster 2 was approximately 6.98. Additionally, it can be seen that the region WesternAsia had the closest mean to cluster 1 (5.22) and the region NorthernAmerica had the closest mean to cluster 2 (7.32). Lastly, the average silhouette width between happiness score and GDP per capita is approximately 0.722, thus showing that a strong structure had been found between the two variables. These results allow us to see that at a higher GDP per capita, there tends to be a higher associated happiness score.</em></p>
+<p><em>Next, I looked at the clustering between the two variables Happiness.Score and Population density (per sq mi) and saw that within the ggplot using the goodness of fit that the highest silhouette width occurs at 2 clusters (k=2). Then, using the pam() function I plotted and summarized the clusters and found that the mean of cluster 1 was approximately 6.09 and the mean of cluster 2 was approximately 5.94. Further, it can be seen that the region EasternEurope had the closest mean to cluster 1 (5.82) and the region EasternAsia had the closest mean to cluster 2 (5.92). Lastly, the average silhouette width between happiness score and population density is approximately 0.714, thus showing that a strong structure had been found between the two variables.</em></p>
+<p>…</p>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

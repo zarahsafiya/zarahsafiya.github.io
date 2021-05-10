@@ -1,0 +1,249 @@
+---
+title: 'Project 1: Exploratory Data Analysis'
+author: "Zarah Jamaluddin (ZSJ223)"
+date: '4/4/2021'
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+  pdf_document:
+    toc: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F,
+tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
+```
+
+## 0. Introduction
+In this investigation, I will explore the correlation between a country's overall happiness score and their corresponding continent, region, population density (per km2), and GDP per capita (US$). The country name and happiness score variables was imported from the World Happiness Report (X2017) dataset and the country name, continent, region, population density, and GDP per capita was imported from the Socio-Economic Country Profiles (soci_econ_country_profiles) dataset. Both of these datasets were obtained using kaggle.com. I believe there may be a possible association between these datasets in that I expect countries with a higher GDP and lower population density to have a higher happiness score.
+
+## 1. Tidying: Rearranging Wide/Long
+
+```{R}
+library(tidyverse)
+library(dplyr)
+library(readxl)
+X2017 <- read_excel("2017.xlsx")
+library(readxl)
+soci_econ_country_profiles <- read_excel("soci_econ_country_profiles.xlsx")
+
+wide_happiness <- X2017 %>% pivot_wider(names_from="country", values_from="Happiness.Score")
+long_happiness <- wide_happiness %>% pivot_longer(cols=c(1:155), names_to="country", values_to="Happiness.Score")
+head(wide_happiness)
+head(long_happiness)
+```
+*First, I had to import the tidyverse and dplyr packages as well as the two datasets into R. Then, I transformed the X2017 dataset from long to wide by first using the pivot_wider function, ensuring that the dataset received its names from the country variable and the values from the Happiness.Score variable. I then transformed the X2017 dataset from wide back to long by using the pivot_longer function, ensuring that the dataset transformed its names to the country variable and the values to the Happiness.Score variable.*
+
+## 2. Joining/Merging
+
+```{R}
+full_happiness <-  inner_join(soci_econ_country_profiles, X2017, by=c("Country"="country"))
+
+length(setdiff(soci_econ_country_profiles$Country, X2017$country))
+length(setdiff(X2017$country, soci_econ_country_profiles$Country))
+length(intersect(soci_econ_country_profiles$Country, X2017$country))
+```
+*In order to join the two datasets, I used the dplyr inner_join function as I needed to join the two datasets and drop any of the country variable rows in either dataset that were not found in both datasets. Addtionally, I did not want there to be NA values within my data, thus causing me to need to intersect my two datasets and not use the dplyr full_join function.*
+
+*As shown by the length(setdiff) function, there are 8 countries that appear in the soci_econ_country_profiles dataset that do not appear in the X2017 dataset while there are 98 countries that appear in the X2017 dataset that appear in the X2017 dataset that do not appear in the soci_econ_country_profiles dataset. Therefore, there is an intersection of 57 total countries between the two datasets and 106 total country cases were dropped from the data.*
+
+*As this removal allowed for a more cohesive dataset to be produces, thus allowing for a better comparison of the joined variables in the combined dataset. For this reason, I do not see any potential problems with removing the dropped cases from the combined dataset.*
+
+## 3. Wrangling
+
+### Mutate, Select
+```{R}
+full_happiness2 <- full_happiness %>% mutate(`Population density (per sq mi)` = `Population density (per km2, 2017)`/2.59) %>% select(Country, Continent, Region, Happiness.Score, "GDP per capita (current US$)", "Population density (per sq mi)", "Population density (per km2, 2017)")
+head(full_happiness2)
+```
+
+### Arrange
+```{R}
+head(full_happiness2 %>% arrange(desc(Happiness.Score)))
+```
+### Summarize, Quantile
+```{R}
+full_happiness2 %>% summarize(quantile(Happiness.Score))
+```
+
+### Summarize, Group_by, Mean
+```{R}
+full_happiness2 %>% group_by(full_happiness2$Continent) %>% summarize(mean(`Population density (per sq mi)`), mean(`GDP per capita (current US$)`), mean(Happiness.Score))
+```
+
+### Summarize, Group_by, Mean
+```{R}
+full_happiness2 %>% group_by(full_happiness2$Region) %>% summarize(mean(`Population density (per sq mi)`), mean(`GDP per capita (current US$)`), mean(Happiness.Score))
+```
+
+### Filter, Summarize, Mean, Median
+```{R}
+full_happiness2 %>% filter(`GDP per capita (current US$)` > median(`GDP per capita (current US$)`)) %>% summarize(mean(Happiness.Score))
+full_happiness2 %>% filter(`GDP per capita (current US$)` < median(`GDP per capita (current US$)`)) %>% summarize(mean(Happiness.Score))
+```
+
+### Filter, Summarize, Mean, Median
+```{R}
+full_happiness2 %>% filter(`Population density (per sq mi)` > median(`Population density (per sq mi)`)) %>% summarize(mean(Happiness.Score))
+full_happiness2 %>% filter(`Population density (per sq mi)` < median(`Population density (per sq mi)`)) %>% summarize(mean(Happiness.Score))
+```
+
+### Summarize, Arrange, Group_by, Filter, Select, Max
+```{R}
+full_happiness2 %>% group_by(full_happiness2$Region) %>% summarize(max_GDP=max(`GDP per capita (current US$)`)) %>% arrange(desc(max_GDP))
+full_happiness2 %>% filter(`GDP per capita (current US$)`==max(`GDP per capita (current US$)`)) %>% select(Country)
+```
+
+### Summarize, Arrange, Group_by, Filter, Select, Min
+```{R}
+full_happiness2 %>% group_by(full_happiness2$Region) %>% summarize(min_GDP=min(`GDP per capita (current US$)`)) %>% arrange(min_GDP)
+full_happiness2 %>% filter(`GDP per capita (current US$)`==min(`GDP per capita (current US$)`)) %>% select(Country)
+```
+
+### Summarize, Arrange, Group_by, Filter, Select, Max
+```{R}
+full_happiness2 %>% group_by(full_happiness2$Region) %>% summarize(max_population=max(`Population density (per sq mi)`)) %>% arrange(desc(max_population))
+full_happiness2 %>% filter(`Population density (per sq mi)`==max(`Population density (per sq mi)`)) %>% select(Country)
+```
+
+### Summarize, Arrange, Group_by, Filter, Select, Min
+```{R}
+full_happiness2 %>% group_by(full_happiness2$Region) %>% summarize(min_population=min(`Population density (per sq mi)`)) %>% arrange(min_population)
+full_happiness2 %>% filter(`Population density (per sq mi)`==min(`Population density (per sq mi)`)) %>% select(Country)
+```
+
+### Filter, Summarize, Median
+```{R}
+full_happiness2 %>% filter(`GDP per capita (current US$)` > median(`GDP per capita (current US$)`)) %>% summarize(median(`Population density (per sq mi)`))
+full_happiness2 %>% filter(`GDP per capita (current US$)` < median(`GDP per capita (current US$)`)) %>% summarize(median(`Population density (per sq mi)`))
+```
+
+### Filter, Summarize, Median
+```{R}
+full_happiness2 %>% filter(`Population density (per sq mi)` > median(`Population density (per sq mi)`)) %>% summarize(median(`GDP per capita (current US$)`))
+full_happiness2 %>% filter(`Population density (per sq mi)` < median(`Population density (per sq mi)`)) %>% summarize(median(`GDP per capita (current US$)`))
+```
+*To begin my wrangling investigation, first I decided to mutate the population density variable from being in km^2 to being in mi^2 in order for both my GDP per capita and population density to be in the U.S. Imperial system of measurement, thus creating a new and more cohesive dataset. I then arranged my data in descending order of the Happiness.Score variable in order to see the ranking of countries according to highest to lowest happiness scores, allowing me to see that the top three countries according to happiness score were Norway, Denmark, and Switzerland. Next, in order to see the breakdown of happiness scores, I used the summarize(quantile) function, thus causing me to see the min, median, and max of the Happiness.Score variable. Next, in order to test how the population density, GDP per capita, and happiness score compared between each region and its corresponding continent, I utilized the summarize, group_by, and mean functions individually for continent and region.*
+
+*After my initial wrangling tests, I was then curious to see how the average happiness score differed when compared to countries that had a GDP per capita or population density greater than the median values for each variable. As a result, I used the filter, summarize, mean, and median functions to test this idea and found that when the GDP per capita and population density was greater than the medians for each value, the happiness score was 6.64 and 5.45 respectively. To compare these findings with when the GDP per capita and population density was less than the median values, I conducted a similar test and found the happiness scores to be 6.03 and 6.11, respectively, thus showing that while the happiness score did decrease with a lower GDP, happiness score did in fact increase with a lower population density as I predicted. I then found the maximum and minimum GDP per capita per each given region and used the select function to find that the country with the greatest GDP per capita was Switzerland, while the country with the least GDP per capita was Pakistan. I also conducted a similar test using population density and found that Lebanon had the highest population density, while Australia had the lowest population density. Lastly, I wanted to compare the GDP per capita and population density variables, thus causing me to use the filter, summarize, and median functions to find the median population density when GDP per capita was greater (43.5 mi^2) and less (38.3 mi^2) than the median GDP per capita. I then conducted the reverse test to find the median GDP per capita when population density was greater ($20,591) and less ($13,900) than the median population density.*
+
+## 4. Visualizing
+
+### Correlation Heatmap
+```{R}
+corMatrix <- full_happiness2 %>% select_if(is.numeric) %>% cor(use = "pair")
+tidycor <- corMatrix %>% as.data.frame %>% rownames_to_column("var1") %>% pivot_longer(-1, names_to="var2", values_to="correlation")
+tidycor %>% ggplot(aes(var1, var2, fill=correlation)) + 
+  geom_tile() + 
+  geom_text(aes(label=round(correlation, 2)), color = "black", size = 3) + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_fill_gradient2(low="white", mid = "blue", high = "light blue") +
+  ggtitle("Correlation Heatmap")
+```
+
+### Happiness Score vs. Region, Faceted by Continent
+```{R}
+library(ggplot2)
+
+ggplot(data=full_happiness2, aes(x=`Region`, y=`Happiness.Score`, fill=`Region`))+
+  geom_bar(stat="summary", fun=mean)+
+  theme(legend.position = "None")+
+  facet_wrap(~Continent)+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+  labs(title = "Mean Happiness Score vs. Region, Faceted by Continent", x="Region", y="Mean Happiness Score")
+```
+
+### Happiness Score vs. GDP per capita, Colored by Region
+```{R}
+ggplot(data=full_happiness2, aes(x=`GDP per capita (current US$)`, y=`Happiness.Score`, color=`Region`))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+  scale_x_continuous(breaks = round(seq(0, 90000, 10000)))+ theme_dark()+
+  labs(title = "Happiness Score vs. GDP per capita, Colored by Region", x="GDP per capita (current US$)", y="Happiness Score")
+```
+
+### Happiness Score vs. Population Density, Colored by Region
+```{R}
+ggplot(data=full_happiness2, aes(x=`Population density (per sq mi)`, y=`Happiness.Score`, color=`Region`))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+  scale_x_continuous(breaks = round(seq(0, 3500, 500)))+ theme_dark()+
+  labs(title = "Happiness Score vs. Population Density, Colored by Region", x="Population Density (per sq mi)", y="Happiness Score")
+```
+*As shown by the Correlation Heatmap, there is a 0.78 correlation between happiness score and GDP per capita, thus showing there to be a relatively large positive correlation between the two variables. However, there is a -0.15 correlation between happiness score and population density, thus showing that there is a very weak negative association between the two variables. Lastly, there is a 0.18 correlation between population density and GDP per capita, thus showing there to be very weak association between the two variables. Furthermore, in this graph, it is shown that there is a 1.00 correlation between population density (per sq mi) and population density (per km2, 2017) due to the fact that these two variables correspond to the same number, but in different units.*
+
+*Next, as shown by the Mean Happiness Score vs. Region, Faceted by Continent graph, it appears as though the Australia has the highest mean happiness scores for each region, while Africa has the lowest mean happiness scores for each region. Lastly, in order to compare happiness score for each region to both GDP per capita and population density, I created two scatterplots colored by region. From these two graphs, a positive correlation between happiness score and GDP per capita per region can be seen, while there does not appear to be as strong of a correlation between happiness score and population density per region with many of the points being scattered seemingly randomly throughout the graph.*
+
+## 5. Dimensionality Reduction
+
+```{R}
+library(cluster)
+
+pam_dat <- full_happiness2 %>% select(Happiness.Score, `GDP per capita (current US$)`)
+sil_width <- vector()
+for(i in 2:10){
+  pam_fit <- pam(pam_dat, k = i)
+  sil_width[i] <- pam_fit$silinfo$avg.width
+}
+ggplot()+geom_line(aes(x=1:10, y=sil_width))+scale_x_continuous(name="k", breaks=1:10)
+```
+
+```{R}
+pam1 <- full_happiness2 %>% select(Happiness.Score, `GDP per capita (current US$)`) %>% pam(k=2)
+pamclust = full_happiness2 %>% mutate(cluster = as.factor(pam1$clustering))
+pamclust %>% ggplot(aes(Happiness.Score, `GDP per capita (current US$)`, color = cluster))+geom_point()
+```
+
+```{R}
+pamclust %>% group_by(cluster) %>% select(cluster, Happiness.Score, `GDP per capita (current US$)`) %>% summarize_if(is.numeric, mean, na.rm=T)
+```
+
+```{R}
+full_happiness2 %>% slice(pam1$id.med) %>% select(Region, Happiness.Score, `GDP per capita (current US$)`)
+```
+
+```{R}
+pam1$silinfo$avg.width
+```
+
+```{R}
+library(cluster)
+
+pam_dat <- full_happiness2 %>% select(Happiness.Score, `Population density (per sq mi)`)
+sil_width <- vector()
+for(i in 2:10){
+  pam_fit <- pam(pam_dat, k = i)
+  sil_width[i] <- pam_fit$silinfo$avg.width
+}
+ggplot()+geom_line(aes(x=1:10, y=sil_width))+scale_x_continuous(name="k", breaks=1:10)
+```
+
+```{R}
+pam1 <- full_happiness2 %>% select(Happiness.Score, `Population density (per sq mi)`) %>% pam(k=2)
+pamclust = full_happiness2 %>% mutate(cluster = as.factor(pam1$clustering))
+pamclust %>% ggplot(aes(Happiness.Score, `Population density (per sq mi)`, color = cluster))+geom_point()
+```
+
+```{R}
+pamclust %>% group_by(cluster) %>% select(cluster, Happiness.Score, `Population density (per sq mi)`) %>% summarize_if(is.numeric, mean, na.rm=T)
+```
+
+```{R}
+full_happiness2 %>% slice(pam1$id.med) %>% select(Region, Happiness.Score, `Population density (per sq mi)`)
+```
+
+```{R}
+pam1$silinfo$avg.width
+```
+*During this section of the investigation, I used k-means/PAM clustering. First, I looked at the clustering between the two variables Happiness.Score and GDP per capita (current US$) and saw that within the ggplot using the goodness of fit that the highest silhouette width occurs at 2 clusters (k=2). I then used the pam() function to plot and summarize the clusters and found that the mean of cluster 1 was approximately 5.56, while the mean of cluster 2 was approximately 6.98. Additionally, it can be seen that the region WesternAsia had the closest mean to cluster 1 (5.22) and the region NorthernAmerica had the closest mean to cluster 2 (7.32). Lastly, the average silhouette width between happiness score and GDP per capita is approximately 0.722, thus showing that a strong structure had been found between the two variables. These results allow us to see that at a higher GDP per capita, there tends to be a higher associated happiness score.*
+
+*Next, I looked at the clustering between the two variables Happiness.Score and Population density (per sq mi) and saw that within the ggplot using the goodness of fit that the highest silhouette width occurs at 2 clusters (k=2). Then, using the pam() function I plotted and summarized the clusters and found that the mean of cluster 1 was approximately 6.09 and the mean of cluster 2 was approximately 5.94. Further, it can be seen that the region EasternEurope had the closest mean to cluster 1 (5.82) and the region EasternAsia had the closest mean to cluster 2 (5.92). Lastly, the average silhouette width between happiness score and population density is approximately 0.714, thus showing that a strong structure had been found between the two variables.*
+
+...
+
+
+
+
+
