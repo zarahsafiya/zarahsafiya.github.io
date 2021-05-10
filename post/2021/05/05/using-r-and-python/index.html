@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Zarah Jamaluddin" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../../../../img/favicon.ico">
+    <title>Using R and Python</title>
+    <meta name="generator" content="Hugo 0.83.1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../../../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../../../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../../../../post/">BLOG</a></li>
+        
+        <li><a href="../../../../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../../../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../../../../post/2021/05/05/using-r-and-python/">Using R and Python</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         May 5, 2021 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="what-is-python" class="section level1">
+<h1>What is Python?</h1>
+<p>Python is a general purpose scripting language that has many features and is often considered to be a great beginner coding language for programmers. This is due to Python being an easy and intuitive language, has concise syntax, and has a compact design that contains many useful library functions.</p>
+</div>
+<div id="what-is-the-difference-between-r-and-python" class="section level1">
+<h1>What is the difference between R and Python?</h1>
+<p>While both R and Python are powerful programming languages, R is known to be mainly used for statistical analysis while Python is more of a general purpose language.</p>
+</div>
+<div id="example-of-r-and-python-together" class="section level1">
+<h1>Example of R and Python Together</h1>
+<pre class="r"><code>library(reticulate)
+hi &lt;- &quot;Hello&quot;</code></pre>
+<pre class="python"><code>hi = &quot;world&quot;
+print(r.hi,hi)</code></pre>
+<pre><code>## Hello world</code></pre>
+<pre class="r"><code>cat(c(hi,py$hi))</code></pre>
+<pre><code>## Hello world</code></pre>
+</div>
+<div id="example-of-python" class="section level1">
+<h1>Example of Python</h1>
+<p>In the following example, I used Python to create a function which returns a new string like the original user-input str, except that the user-input ch has now been inserted at the i position of the string. If the i index is greater than the length of the string, “Invalid index” is returned.</p>
+<pre class="python"><code>def myInsert( str, i, ch ):
+    s = str
+    finalCharacter = len(str)
+    currentCharacter = 0
+    if i &gt; finalCharacter:
+        print(&quot;Invalid index&quot;)
+        return None
+    else:
+        part1 = s[0:i]
+        part2 = s[i:]
+    return part1 + ch + part2
+
+myInsert(&quot;abc&quot;, 0, &quot;d&quot;)</code></pre>
+<pre><code>## &#39;dabc&#39;</code></pre>
+<pre class="python"><code>myInsert(&quot;abc&quot;, 2, &quot;d&quot;)</code></pre>
+<pre><code>## &#39;abdc&#39;</code></pre>
+<pre class="python"><code>myInsert(&quot;abc&quot;, 4, &quot;d&quot;)</code></pre>
+<pre><code>## Invalid index</code></pre>
+<p><img src="https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F24%2F2020%2F12%2F03%2FGettyImages-1045641844-2000.jpg" /></p>
+</div>
+
+            
+
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../../../../js/docs.min.js"></script>
+<script src="../../../../../js/main.js"></script>
+
+<script src="../../../../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

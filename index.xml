@@ -5,7 +5,18 @@
     <link>/</link>
     <description>Recent content on Zarah Jamaluddin</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-US</language><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-US</language>
+    <lastBuildDate>Wed, 05 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Using R and Python</title>
+      <link>/post/2021/05/05/using-r-and-python/</link>
+      <pubDate>Wed, 05 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2021/05/05/using-r-and-python/</guid>
+      <description>What is Python? Python is a general purpose scripting language that has many features and is often considered to be a great beginner coding language for programmers. This is due to Python being an easy and intuitive language, has concise syntax, and has a compact design that contains many useful library functions.
+ What is the difference between R and Python? While both R and Python are powerful programming languages, R is known to be mainly used for statistical analysis while Python is more of a general purpose language.</description>
+    </item>
+    
     <item>
       <title>Project 1: Exploratory Data Analysis</title>
       <link>/project/project1/</link>
